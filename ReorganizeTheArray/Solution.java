@@ -2,51 +2,67 @@ import java.util.Scanner;
 
 public class Solution {
 
-    public static void largestNumber(int i, int j,char[] max,String s,int k)
+    public static boolean isSmall(String str, char[] min, int iStr, int iOut, int k)
     {
-        if(i <= s.length()-k && j < k) {
-            if (s.charAt(i) > max[j]) {
-                int temp = i;
-                for (int m = 0; m < k; m++) {
-                    max[m] = s.charAt(temp);
-                    temp++;
-                }
-                largestNumber(i + 1, j, max, s, k);
-            } else if (s.charAt(i) == max[j]) {
-                largestNumber(i + 1, j + 1, max, s, k);
-            } //else {
-                largestNumber(i + 1, 0, max, s, k);
-            //}
-        }
+        if(str.charAt(iStr) < min[iOut])
+            return true;
+        else if(str.charAt(iStr) == min[iOut]) {
+            if(iOut+1 == k)
+                return false;
+            return isSmall(str, min, iStr + 1, iOut + 1, k);
+        }else
+            return false;
     }
-    public static void leastNumber(int i, int j,char[] min,String s,int k)
+    public static String getSmall( String str, int k)
     {
-        if(i <= s.length()-k && j < k) {
-            if (s.charAt(i) < min[j]) {
-                int temp = i;
-                for (int m = 0; m < k; m++) {
-                    min[m] = s.charAt(temp);
-                    temp++;
-                }
-                leastNumber(i + 1, j, min, s, k);
-            } else if (s.charAt(i) == min[j]) {
-                leastNumber(i + 1, j + 1, min, s, k);
-            } //else {
-            leastNumber(i + 1, 0, min, s, k);
-            //}
+        char[] min = new char[k];
+        for(int i = 0; i < k; i++)
+            min[i] = 'z';
+        for(int i = 0; i <= str.length() - k; i++)
+        {
+            if(isSmall(str, min, i, 0, k))
+            {
+                for(int j = 0; j < k; j++)
+                    min[j] = str.charAt(i+j);
+            }
         }
+        return String.copyValueOf(min);
+    }
+
+    public static boolean isBig(String str, char[] max, int iStr, int iOut, int k)
+    {
+        if(str.charAt(iStr) > max[iOut])
+            return true;
+        else if(str.charAt(iStr) == max[iOut]) {
+            if (iOut+1 == k)
+                return false;
+            return isBig(str, max, iStr + 1, iOut + 1, k);
+        } else
+            return false;
+    }
+
+    public static String getLarge(String str, int k)
+    {
+        char[] max = new char[k];
+        for(int i = 0; i < k; i++)
+            max[i] = 'A';
+        for(int i = 0; i <= str.length() - k; i++)
+        {
+            if(isBig(str, max, i, 0, k))
+            {
+                for(int j = 0; j < k; j++)
+                    max[j] = str.charAt(i+j);
+            }
+        }
+        return String.copyValueOf(max);
+
     }
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
-        String s = scan.next();
+        String str = scan.next();
         int k = scan.nextInt();
-        char[] max = new char[k];
-        char[] min = new char[k];
-        for(int i = 0; i<k; i++) {max[i] = 'A';}
-        for(int i = 0; i<k; i++) {min[i] = 'z';}
-        largestNumber(0,0,max,s,k);
-        leastNumber(0,0,min,s,k);
-        System.out.println(String.copyValueOf(max) + "\n" + String.copyValueOf(min));
-        //System.out.println(min);
+        String min = getSmall(str, k);
+        String max = getLarge(str, k);
+        System.out.println("Max String: " + max + "\nMin String: " + min);
     }
 }
